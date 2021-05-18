@@ -1,42 +1,13 @@
-const request = require ('request')
-const http = require ('http')
+var axios = require('axios');
 
-const hostname = "https://swapi.dev/api/planets/?search="
+const seachPlanet = async (namePlanet) => {
 
-function getInfoPlanet(nome) {
-    request(`${hostname}${nome}`, (err, res, body) => {
+    const result = await axios.get(`https://swapi.dev/api/planets/?search=${namePlanet}`)
+    .catch((error) => {
+      return error;    
+    });
+    return result.data;
+};
 
-       const {data} = body
-       return data;
-        });
-        
-}
-nome = "Tatooine"
-console.log(getInfoPlanet(nome))
+module.exports = seachPlanet;
 
-
-
-/*
-async function getInfoPlanet(nome) {
-  try {
-
-    const list =  ({
-        url: hostname,
-        method: 'GET',
-        params: {
-            search: nome
-        }
-    })
-
-    const {data} = await request(list);
-
-    return data;
-  } catch  (error) {
-    
-  }
-  
-}
-nome = "Tatooine"
-console.log(getInfoPlanet(nome))
-
-module.exports = getInfoPlanet; */

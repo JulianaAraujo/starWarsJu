@@ -1,21 +1,19 @@
 
 const HttpError = require('../models/http-error')
 const planet = require('../models/planet')
-const infoPlanet = require('../client/apiStarWars')
+const getStarWars = require('../client/apiStarWars')
 
 const newPlanet = async (req, res, next) => {
-    const { nome, clima, terreno } = req.body
+    const { nome, clima, terreno} = req.body
 
-    const responsePlanetsByName = await infoPlanet(nome)
+    const responsePlanetsByName = await getStarWars(nome)
 
-   
-    console.log(responsePlanetsByName)
-    
     if (responsePlanetsByName.count == 0) {
         const err = new HttpError('Planeta não existe', 500)
         return next(err)
     }
 
+  
     let climate = responsePlanetsByName.results[0].climate
 
     if (climate != clima) {
@@ -30,23 +28,22 @@ const newPlanet = async (req, res, next) => {
         return next(err)
     }
 
-    let qtdFilmes = responsePlanetsByName.results[0].films.length
+    let films = responsePlanetsByName.results[0].films.length
+    console.log(films)
+     
+    const createdPlanet = new planet ({
+      nome: nome,
+      clima: clima,
+      terreno: terreno,
+      qtdFilmes: films
+    });
 
-      const createdPlanet = new planet ({
-        nome,
-        clima,
-        terreno,
-        qtdFilmes
-      });
-
-      try {
-        await createdPlanet.save()
-      } catch (error) {
-        const err = new HttpError('Não foi possivel salvar o Planeta', 500)
-        return next(err)
-      }
-
-  }
-
-
+    try {
+      await createdPlanet.save()
+    } catch (error) {
+      console.log(error)
+      const err = new HttpError('Não foi possivel salvar o Planeta', 500)
+      return next(err)
+    }
+    }
 exports.newPlanet = newPlanet

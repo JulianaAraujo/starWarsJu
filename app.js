@@ -40,10 +40,14 @@ app.use(function(err, req, res, next) {
 
 
 
-mongoose
-.connect("mongodb+srv://starWarsJu:1234@cluster0.b4pfd.mongodb.net/starWarsJu?retryWrites=true&w=majority")
-.then(() => console.log('MongoDB conectado'))
-.catch(err => console.log(err))
-app.listen(8000, () => console.log ('server rodando na porta 8000'))
+const url = "mongodb+srv://starWarsJu:1234@cluster0.b4pfd.mongodb.net/starWarsJu?retryWrites=true&w=majority"
+
+mongoose.connect(url, { useUnifiedTopology: true, useNewUrlParser: true });
+const db = mongoose.connection;
+
+db.once('open', () => {
+  console.log('Conexão bem sucedida');
+})
+
 
 module.exports = app;
